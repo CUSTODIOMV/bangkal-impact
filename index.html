@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wildverse - Monster Adventure</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- Main Game Container -->
+    <main class="game-container">
+
+        <!-- Header -->
+        <header class="game-header">
+            <h1>ELUMBA</h1>
+            <p> The Legends</p>
+        </header>
+
+        <!-- Main Menu -->
+        <section class="main-menu" id="mainMenu">
+
+            <div class="game-intro">
+                <h2>Your Adventure Begins Here</h2>
+                <p>Explore the world. Discover monsters. Build your own adventure.</p>
+            </div>
+
+            <nav class="menu-buttons">
+                <button id="newGameBtn">New Game</button>
+                <button id="continueBtn">Continue</button>
+                <button id="collectionBtn">Monster Collection</button>
+                <button id="historyBtn">Score History</button>
+            </nav>
+
+        </section>
+
+        <!-- Game Screen -->
+        <section class="game-screen" id="gameScreen">
+
+            <header class="player-info">
+                <h2>Player Profile</h2>
+                <p>Trainer: <span id="playerName">Player</span></p>
+                <p>Level: <span id="playerLevel">1</span></p>
+                <p>Score: <span id="playerScore">0</span></p>
+            </header>
+
+            <div class="world-container" id="worldContainer">
+                <h2>Adventure World</h2>
+                <p>Your journey starts here...</p>
+            </div>
+
+            <nav class="game-navigation">
+                <button id="exploreBtn">Explore</button>
+                <button id="monsterBtn">My Monsters</button>
+                <button id="backBtn">Main Menu</button>
+            </nav>
+
+        </section>
+
+        <!-- Monster Collection -->
+        <section class="collection-screen" id="collectionScreen">
+
+            <h2>Monster Collection</h2>
+
+            <div class="monster-list" id="monsterList">
+                <p>No monsters collected yet.</p>
+            </div>
+
+            <button id="collectionBackBtn">Back to Menu</button>
+
+        </section>
+
+        <!-- Score History -->
+        <section class="history-screen" id="historyScreen">
+
+            <h2>Score History</h2>
+
+            <div class="score-summary">
+                <p>Personal Best: <span id="highScore">0</span></p>
+                <p>Total Games: <span id="totalGames">0</span></p>
+            </div>
+
+            <div class="score-list" id="scoreList">
+                <p>No records available.</p>
+            </div>
+
+            <button id="historyBackBtn">Back to Menu</button>
+
+        </section>
+
+        <!-- Footer -->
+        <footer class="game-footer">
+            <p>ELUMBA © 2026</p>
+            <p>Group 5 - Web Development</p>
+        </footer>
+
+    </main>
+
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+
+</body>
+</html>
