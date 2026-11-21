@@ -11,83 +11,113 @@ body {
     background: #101C19;
     color: #F1F0DF;
     min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/* ANIMATED BACKGROUND */
+body::before {
+    content: "";
+    position: fixed;
+    inset: -5%;
+
+    background:
+        linear-gradient(
+            rgba(16, 28, 25, 0.65),
+            rgba(16, 28, 25, 0.65)
+        ),
+        url("../ASSETS/backgrounds/menu-bg.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    z-index: 0;
+
+    animation: cinematicMove 6s ease-in-out infinite;
+}
+
 /* MAIN CONTAINER */
 .game-container {
-    width: 90%;
-    max-width: 1000px;
-    min-height: 600px;
-    background: #1B2C27;
-    border: 2px solid #506B58;
-    border-radius: 15px;
-    padding: 30px;
+    width: 100%;
+    max-width: none;
+    height: 100vh;
+    height: 100svh;
+    min-height: 0;
+    background: transparent;
+    border: none;
+    padding: 10px 20px;
     text-align: center;
-    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+    box-shadow: none;
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 /* HEADER */
 .game-header {
-    margin-bottom: 40px;
+    margin-bottom: 0;
+    flex-shrink: 0;
 }
 
-.game-header h1 {
-    font-size: 48px;
-    letter-spacing: 8px;
-    color: #D7B979;
-}
-
-.game-header p {
-    color: #A8B9A9;
-    margin-top: 8px;
-    letter-spacing: 2px;
+.game-logo {
+    width: 320px;
+    max-width: 90%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
 }
 
 /* GAME SECTIONS */
 .game-screen,
-.collection-screen,
-.history-screen {
+.settings-screen,
+.leaderboard-screen,
+.character-selection {
     display: none;
 }
 
 .main-menu {
-    padding: 30px 10px;
+    padding: 0;
+    margin: auto 0;
 }
 
-/* INTRO */
 .game-intro {
-    margin-bottom: 35px;
+    margin-bottom: 20px;
 }
 
 .game-intro h2 {
     font-size: 26px;
-    margin-bottom: 12px;
+    margin-bottom: 5px;
     color: #E8D7A8;
 }
 
 .game-intro p {
     color: #B5C4B7;
-    line-height: 1.6;
+    line-height: 1.4;
 }
 
-/* BUTTONS */
 .menu-buttons {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 15px;
+    gap: 9px;
 }
+
 
 button {
     width: 260px;
-    padding: 14px;
+    padding: 11px;
     border: 1px solid #D7B979;
     border-radius: 8px;
-    background: #30483B;
-    color: #F1F0DF;
+    background: #14673b;
+    color: #ffffff;
     font-size: 15px;
     font-weight: bold;
     cursor: pointer;
@@ -123,7 +153,7 @@ button:hover {
     margin-bottom: 20px;
 }
 
-/* NAVIGATION */
+/* GAME NAVIGATION */
 .game-navigation {
     display: flex;
     justify-content: center;
@@ -131,61 +161,741 @@ button:hover {
     gap: 10px;
 }
 
-/* COLLECTION AND HISTORY */
-.collection-screen,
-.history-screen {
+/* SETTINGS SCREEN */
+.settings-screen {
     padding: 20px;
 }
 
-.collection-screen h2,
-.history-screen h2 {
-    margin-bottom: 25px;
+.settings-screen h2 {
     color: #E8D7A8;
+    margin-bottom: 25px;
 }
 
-.score-summary {
+.settings-options {
     background: #263B32;
-    padding: 20px;
+    padding: 25px;
     border-radius: 10px;
-    margin-bottom: 20px;
-    line-height: 2;
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.score-list,
-.monster-list {
+.settings-options label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #C4D1C5;
+    cursor: pointer;
+}
+
+.settings-options input {
+    accent-color: #D7B979;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+/* LEADERBOARDS SCREEN */
+.leaderboard-screen {
     padding: 20px;
-    margin-bottom: 20px;
+}
+
+.leaderboard-screen h2 {
+    color: #E8D7A8;
+    margin-bottom: 12px;
+}
+
+.leaderboard-screen > p {
+    color: #B5C4B7;
+    margin-bottom: 25px;
+}
+
+.leaderboard-list {
     background: #30483B;
+    border: 1px solid #627D60;
     border-radius: 10px;
+    padding: 25px;
+    margin-bottom: 25px;
+    min-height: 120px;
+    line-height: 2;
 }
 
 /* FOOTER */
 .game-footer {
-    margin-top: 40px;
+    margin-top: 0;
+    padding: 10px 0 5px;
     color: #829789;
     font-size: 12px;
-    line-height: 1.8;
+    line-height: 1.6;
+    flex-shrink: 0;
 }
 
-/* RESPONSIVE DESIGN */
+
+
+/* CHARACTER SELECTION BACKGROUND */
+body.character-selection-active::before {
+    background:
+        linear-gradient(
+            rgba(16, 28, 25, 0.45),
+            rgba(16, 28, 25, 0.65)
+        ),
+        url("../ASSETS/backgrounds/character-selection-bg.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* CHARACTER SELECTION HEADER */
+body.character-selection-active .game-header {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    left: auto;
+    z-index: 2;
+}
+
+body.character-selection-active .game-logo {
+    width: 190px;
+}
+
+
+/* CHARACTER SELECTION LAYOUT */
+.character-selection {
+    position: relative;
+    width: 100%;
+    max-width: 950px;
+    margin: auto;
+    padding: 65px 20px 20px;
+}
+
+.character-selection h2 {
+    color: #ffffff;
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.character-selection > p {
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+/* PLAYER NAME */
+.player-name-section {
+    margin: 0 auto 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.player-name-section label {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.player-name-section input {
+    width: 280px;
+    max-width: 90%;
+    padding: 12px;
+    border: 1px solid #D7B979;
+    border-radius: 8px;
+    background: rgba(16, 28, 25, 0.9);
+    color: white;
+    text-align: center;
+    font-size: 16px;
+    outline: none;
+}
+
+.player-name-section input:focus {
+    border-color: #F1F0DF;
+}
+
+/* CHARACTER LIST */
+.character-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+/* CHARACTER CARDS */
+.character-option {
+    width: 220px;
+    min-height: 290px;
+    padding: 15px;
+    background: rgba(16, 28, 25, 0.80);
+    border: 2px solid #627D60;
+    border-radius: 12px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    transition: 0.3s;
+}
+
+.character-option:hover {
+    border-color: #D7B979;
+    transform: translateY(-5px);
+}
+
+/* SELECTED CHARACTER */
+.character-option.selected {
+    border: 3px solid #dcba72;
+    background: rgba(38, 59, 50, 0.95);
+    box-shadow: 0 0 15px rgb(255, 255, 255);
+}
+
+.character-option img {
+    width: 100%;
+    height: 205px;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.character-option button {
+    width: 100%;
+}
+
+/* START ADVENTURE */
+#startAdventureBtn {
+    margin-top: 20px;
+}
+
+/* BACK BUTTON */
+.back-button {
+    position: fixed;
+    top: 90px;
+    left: 55px;
+    width: 150px;
+    z-index: 3;
+}
+
+
+
+
+
+
+
+
+/* ============================= */
+/* BATTLE SCREEN */
+/* ============================= */
+
+.game-screen {
+    width: 100%;
+    max-width: 1100px;
+    margin: auto;
+    padding: 10px 15px;
+    position: relative;
+}
+
+/* HIDE LOGO DURING GAME */
+body.battle-active .game-header {
+    display: none;
+}
+
+/* TOP NAVIGATION */
+
+.battle-navigation {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: rgba(16, 28, 25, 0.95);
+    border: 1px solid #627D60;
+    border-radius: 12px;
+}
+
+.battle-nav-left {
+    display: flex;
+    gap: 10px;
+}
+
+.battle-navigation button {
+    width: auto;
+    min-width: 115px;
+    padding: 10px 15px;
+    margin: 0;
+}
+
+.main-menu-btn {
+    background: #263B32;
+}
+
+/* MAIN MENU PANEL */
+
+.battle-menu-panel {
+    display: none;
+    position: absolute;
+    top: 75px;
+    right: 15px;
+    z-index: 5;
+    width: 190px;
+    padding: 12px;
+    background: #263B32;
+    border: 1px solid #D7B979;
+    border-radius: 10px;
+}
+
+.battle-menu-panel button {
+    width: 100%;
+    margin: 5px 0;
+}
+
+/* STAGE HEADER */
+
+.stage-header {
+    margin: 18px 0;
+}
+
+.stage-header h2 {
+    color: #E8D7A8;
+    font-size: 25px;
+    letter-spacing: 2px;
+}
+
+.stage-header p {
+    color: #B5C4B7;
+    margin-top: 5px;
+}
+
+/* MONSTER STATUS */
+
+.battle-status {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.monster-status {
+    background: rgba(38, 59, 50, 0.95);
+    border: 1px solid #627D60;
+    border-radius: 10px;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.monster-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.monster-details h3 {
+    color: #E8D7A8;
+    font-size: 16px;
+}
+
+.monster-details p,
+.health-info p {
+    color: #C4D1C5;
+    font-size: 13px;
+}
+
+.health-bar {
+    width: 100%;
+    height: 12px;
+    background: #17221D;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #627D60;
+}
+
+.health-fill {
+    width: 100%;
+    height: 100%;
+    background: #4CAF50;
+    border-radius: 20px;
+}
+
+.health-info p {
+    margin-top: 5px;
+}
+
+.versus-label {
+    color: #D7B979;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* BEFORE BATTLE: HIDE ENEMY */
+
+.enemy-status,
+.enemy-placeholder,
+.versus-label,
+.battle-skills {
+    display: none;
+}
+
+/* SHOW ONLY PLAYER STATUS BEFORE BATTLE */
+
+.player-status {
+    grid-column: 1 / -1;
+}
+
+/* BATTLE ARENA */
+
+.battle-arena {
+    position: relative;
+    width: 100%;
+    min-height: 320px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            rgba(16, 28, 25, 0.15),
+            rgba(16, 28, 25, 0.35)
+        ),
+        linear-gradient(#536B52, #30483B);
+
+    border: none;
+    border-radius: 12px;
+}
+
+.monster-placeholder {
+    width: 45%;
+    height: 230px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    border: none;
+}
+
+.monster-placeholder span {
+    color: #F1F0DF;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 4px #101C19;
+}
+
+/* BEFORE BATTLE TEAM */
+
+.before-battle {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(38, 59, 50, 0.95);
+    border: 1px solid #627D60;
+    border-radius: 10px;
+}
+
+.before-battle h3 {
+    color: #E8D7A8;
+}
+
+.before-battle p {
+    color: #B5C4B7;
+    margin: 6px 0 12px;
+    font-size: 13px;
+}
+
+.team-slots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.team-slot {
+    width: 110px;
+    height: 65px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed #829789;
+    border-radius: 8px;
+    color: #B5C4B7;
+    font-size: 12px;
+}
+
+#startBattleBtn {
+    width: 220px;
+}
+
+/* DURING BATTLE */
+
+.game-screen.battle-started .before-battle {
+    display: none;
+}
+
+.game-screen.battle-started .player-status {
+    grid-column: auto;
+}
+
+.game-screen.battle-started .enemy-status {
+    display: block;
+}
+
+.game-screen.battle-started .enemy-placeholder {
+    display: flex;
+}
+
+.game-screen.battle-started .versus-label {
+    display: block;
+}
+
+.game-screen.battle-started .battle-skills {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.skill-button {
+    width: 100%;
+    margin: 0;
+    padding: 14px 8px;
+}
+
+/* RESPONSIVE BATTLE SCREEN */
+
 @media (max-width: 600px) {
 
-    .game-container {
-        width: 95%;
-        padding: 20px 12px;
+    .game-screen {
+        padding: 5px;
+        max-height: 100%;
+        overflow-y: auto;
     }
 
-    .game-header h1 {
-        font-size: 32px;
-        letter-spacing: 5px;
+    .battle-navigation {
+        padding: 8px;
+    }
+
+    .battle-nav-left {
+        gap: 5px;
+    }
+
+    .battle-navigation button {
+        min-width: 0;
+        padding: 9px 10px;
+        font-size: 12px;
+    }
+
+    .battle-menu-panel {
+        top: 65px;
+        right: 5px;
+    }
+
+    .stage-header h2 {
+        font-size: 19px;
+    }
+
+    .battle-status {
+        gap: 8px;
+    }
+
+    .monster-details h3 {
+        font-size: 14px;
+    }
+
+    .battle-arena {
+        min-height: 230px;
+        padding: 10px;
+    }
+
+    .monster-placeholder {
+        height: 160px;
+    }
+
+    .monster-placeholder span {
+        font-size: 10px;
+        text-align: center;
+    }
+
+    .team-slot {
+        width: 30%;
+        height: 55px;
+        font-size: 10px;
+    }
+
+    .game-screen.battle-started .battle-skills {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .skill-button {
+        padding: 11px 5px;
+        font-size: 13px;
+    }
+}
+
+
+
+
+
+
+
+
+/* PLAYER MONSTER SPRITE */
+
+.player-placeholder img {
+    width: 180px;
+    height: 180px;
+
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.enemy-placeholder img {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    image-rendering: pixelated;
+
+    transform: scaleX(-1);
+
+    position: relative;
+    left: 50px;
+}
+
+
+
+
+/* Screen Sizes */
+@media (max-width: 600px) {
+    .game-container {
+        padding: 10px 12px;
+    }
+
+    .game-logo {
+        width: 260px;
+    }
+
+    .game-intro h2 {
+        font-size: 21px;
     }
 
     button {
         width: 100%;
         max-width: 280px;
+        padding: 11px;
+    }
+}
+
+@media (max-height: 750px) {
+    .game-logo {
+        width: 230px;
     }
 
-    .world-container {
-        padding: 25px 10px;
+    .game-intro {
+        margin-bottom: 12px;
     }
+
+    .menu-buttons {
+        gap: 7px;
+    }
+
+    button {
+        padding: 9px;
+    }
+
+    .game-footer {
+        padding: 5px 0 2px;
+    }
+}
+
+/* Movement animation */
+@keyframes cinematicMove {
+
+    0% {
+        transform: scale(1.02);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1.02);
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .game-container {
+        padding: 10px 12px;
+    }
+
+    .game-logo {
+        width: 260px;
+    }
+
+    .game-intro h2 {
+        font-size: 21px;
+    }
+
+    button {
+        width: 100%;
+        max-width: 280px;
+        padding: 11px;
+    }
+
+    /* Character Selection */
+    body.character-selection-active .game-header {
+    top: 10px;
+    right: 10px;
+    left: auto;
+}
+
+body.character-selection-active .game-logo {
+    width: 110px;
+}
+
+    .character-selection {
+        padding: 90px 10px 20px;
+        min-height: 0;
+        max-height: 100%;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #D7B979 transparent;
+    }
+
+    .character-selection h2 {
+        font-size: 22px;
+    }
+
+    .character-list {
+        gap: 12px;
+    }
+
+    .character-option {
+        width: 135px;
+        min-height: 210px;
+        padding: 8px;
+    }
+
+    .character-option img {
+        height: 145px;
+    }
+
+    .back-button {
+    top: 15px;
+    left: 10px;
+    width: 125px;
+    font-size: 12px;
+}
+
 }

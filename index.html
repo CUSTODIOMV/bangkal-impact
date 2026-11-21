@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wildverse - Monster Adventure</title>
+    <title>Bangkal Impact - Monster Adventure</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
@@ -16,84 +17,238 @@
 
         <!-- Header -->
         <header class="game-header">
-            <h1>ELUMBA</h1>
-            <p> The Legends</p>
+            <img src="ASSETS/bangkal-impact-logo.png"
+                 alt="Bangkal Impact Logo"
+                 class="game-logo">
         </header>
 
         <!-- Main Menu -->
         <section class="main-menu" id="mainMenu">
 
             <div class="game-intro">
-                <h2>Your Adventure Begins Here</h2>
-                <p>Explore the world. Discover monsters. Build your own adventure.</p>
+                <h2>𝒀𝒐𝒖𝒓 𝑨𝒅𝒗𝒆𝒏𝒕𝒖𝒓𝒆 𝑩𝒆𝒈𝒊𝒏𝒔 𝑯𝒆𝒓𝒆</h2>
+                <p>𝙴𝚟𝚎𝚛𝚢 𝙱𝚊𝚝𝚝𝚕𝚎 𝙻𝚎𝚊𝚟𝚎𝚜 𝚊𝚗 𝙸𝚖𝚙𝚊𝚌𝚝</p>
             </div>
 
             <nav class="menu-buttons">
                 <button id="newGameBtn">New Game</button>
                 <button id="continueBtn">Continue</button>
-                <button id="collectionBtn">Monster Collection</button>
-                <button id="historyBtn">Score History</button>
+                <button id="settingsBtn">Settings</button>
+                <button id="leaderboardBtn">Leaderboards</button>
+                <button id="quitGameBtn">Quit Game</button>
             </nav>
 
         </section>
 
-        <!-- Game Screen -->
-        <section class="game-screen" id="gameScreen">
+        
 
-            <header class="player-info">
-                <h2>Player Profile</h2>
-                <p>Trainer: <span id="playerName">Player</span></p>
-                <p>Level: <span id="playerLevel">1</span></p>
-                <p>Score: <span id="playerScore">0</span></p>
-            </header>
+<!-- Character Selection -->
+<section class="character-selection" id="characterSelection">
 
-            <div class="world-container" id="worldContainer">
-                <h2>Adventure World</h2>
-                <p>Your journey starts here...</p>
+    <button class="back-button" id="characterBackBtn">
+        ← Back to Menu
+    </button>
+
+    <div class="player-name-section">
+        <label for="playerNameInput">Enter Your Player Name</label>
+        <input type="text"
+               id="playerNameInput"
+               maxlength="15"
+               placeholder="Enter your name...">
+    </div>
+
+    <h2>𝑪𝒉𝒐𝒐𝒔𝒆 𝒚𝒐𝒖𝒓 𝑪𝒉𝒂𝒓𝒂𝒄𝒕𝒆𝒓</h2>
+    <p>ꜱᴇʟᴇᴄᴛ ʏᴏᴜʀ ᴄʜᴀʀᴀᴄᴛᴇʀ ᴛᴏ ʙᴇɢɪɴ ʏᴏᴜʀ ᴀᴅᴠᴇɴᴛᴜʀᴇ.</p>
+
+    <div class="character-list">
+
+        <div class="character-option">
+            <img src="ASSETS/characters/characterA-front.png"
+                 alt="Character A">
+            <button class="select-character" data-character="characterA">
+                Select
+            </button>
+        </div>
+
+        <div class="character-option">
+            <img src="ASSETS/characters/characterB-front.png"
+                 alt="Character B">
+            <button class="select-character" data-character="characterB">
+                Select
+            </button>
+        </div>
+
+        <div class="character-option">
+            <img src="ASSETS/characters/characterC-front.png"
+                 alt="Character C">
+            <button class="select-character" data-character="characterC">
+                Select
+            </button>
+        </div>
+
+    </div>
+
+    <button id="startAdventureBtn">Start Adventure</button>
+
+</section>
+
+
+
+<!-- Game Screen -->
+<section class="game-screen" id="gameScreen">
+<span id="playerName" hidden></span>
+    <!-- TOP NAVIGATION -->
+    <nav class="battle-navigation">
+
+        <div class="battle-nav-left">
+            <button id="monsterBtn">My Monsters</button>
+            <button id="itemsBtn">Items</button>
+        </div>
+
+        <button id="backBtn" class="main-menu-btn">
+            Main Menu ☰
+        </button>
+
+    </nav>
+
+    <!-- MAIN MENU PANEL -->
+    <div class="battle-menu-panel" id="battleMenuPanel">
+        <button id="resumeBtn">Resume</button>
+        <button id="battleSettingsBtn">Settings</button>
+        <button id="exitGameBtn">Exit Game</button>
+    </div>
+
+    <!-- STAGE INFORMATION -->
+    <div class="stage-header">
+        <h2>STAGE 1: DIVISORIA</h2>
+        <p>Prepare for your first battle!</p>
+    </div>
+
+    
+<!-- BATTLE STATUS -->
+<div class="battle-status">
+
+    <div class="monster-status player-status">
+
+    <div class="monster-details">
+        <h3 id="playerMonsterName">Tarsela</h3>
+        <p>Lv. <span id="playerMonsterLevel">1</span></p>
+    </div>
+
+    <div class="health-info">
+        <div class="health-bar">
+            <div class="health-fill" id="playerHealthFill"></div>
+        </div>
+
+        <p id="playerHpText">HP: 100 / 100</p>
+    </div>
+
+</div>
+
+    <div class="versus-label">VS</div>
+
+    <div class="monster-status enemy-status">
+
+    <div class="monster-details">
+        <h3 id="enemyMonsterName">Dagtwig</h3>
+        <p>Lv. <span id="enemyMonsterLevel">1</span></p>
+    </div>
+
+    <div class="health-info">
+        <div class="health-bar">
+            <div class="health-fill" id="enemyHealthFill"></div>
+        </div>
+
+        <p id="enemyHpText">HP: 90 / 90</p>
+    </div>
+
+</div>
+
+</div>
+
+<!-- BATTLE ARENA -->
+<div class="battle-arena">
+
+    <div class="player-placeholder">
+    <img 
+        id="playerMonsterSprite"
+        src="ASSETS/monsters/tarsela/idle.png"
+        alt="Tarsela"
+    >
+</div>
+
+    <div class="monster-placeholder enemy-placeholder">
+    <img 
+        id="enemyMonsterSprite"
+        src="ASSETS/monsters/dagtwig/idle.png"
+        alt="Dagtwig"
+    >
+</div>
+
+</div>
+
+<!-- BEFORE BATTLE -->
+<div class="before-battle">
+    <h3>Your Monster Team</h3>
+    <p>You can have up to 3 monsters in your team.</p>
+
+    <div class="team-slots">
+        <div class="team-slot">Monster 1</div>
+        <div class="team-slot">Monster 2</div>
+        <div class="team-slot">Monster 3</div>
+    </div>
+
+    <button id="startBattleBtn">Start Battle</button>
+</div>
+
+<!-- BATTLE SKILLS -->
+<div class="battle-skills">
+    <button class="skill-button">Skill 1</button>
+    <button class="skill-button">Skill 2</button>
+    <button class="skill-button">Skill 3</button>
+    <button class="skill-button">Skill 4</button>
+</div>
+
+
+
+        <!-- Settings Screen -->
+        <section class="settings-screen" id="settingsScreen">
+
+            <h2>Settings</h2>
+
+            <div class="settings-options">
+                <label>
+                    <input type="checkbox" id="musicToggle" checked>
+                    Background Music
+                </label>
+
+                <label>
+                    <input type="checkbox" id="soundToggle" checked>
+                    Sound Effects
+                </label>
             </div>
 
-            <nav class="game-navigation">
-                <button id="exploreBtn">Explore</button>
-                <button id="monsterBtn">My Monsters</button>
-                <button id="backBtn">Main Menu</button>
-            </nav>
+            <button id="settingsBackBtn">Back to Menu</button>
 
         </section>
 
-        <!-- Monster Collection -->
-        <section class="collection-screen" id="collectionScreen">
+        <!-- Leaderboards Screen -->
+        <section class="leaderboard-screen" id="leaderboardScreen">
 
-            <h2>Monster Collection</h2>
+            <h2>Leaderboards</h2>
+            <p>Top Players and Their Scores</p>
 
-            <div class="monster-list" id="monsterList">
-                <p>No monsters collected yet.</p>
+            <div class="leaderboard-list" id="leaderboardList">
+                <p>No scores recorded yet.</p>
             </div>
 
-            <button id="collectionBackBtn">Back to Menu</button>
-
-        </section>
-
-        <!-- Score History -->
-        <section class="history-screen" id="historyScreen">
-
-            <h2>Score History</h2>
-
-            <div class="score-summary">
-                <p>Personal Best: <span id="highScore">0</span></p>
-                <p>Total Games: <span id="totalGames">0</span></p>
-            </div>
-
-            <div class="score-list" id="scoreList">
-                <p>No records available.</p>
-            </div>
-
-            <button id="historyBackBtn">Back to Menu</button>
+            <button id="leaderboardBackBtn">Back to Menu</button>
 
         </section>
 
         <!-- Footer -->
         <footer class="game-footer">
-            <p>ELUMBA © 2026</p>
+            <p>COMPRO © 2026</p>
             <p>Group 5 - Web Development</p>
         </footer>
 
