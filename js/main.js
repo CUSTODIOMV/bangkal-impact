@@ -9,6 +9,14 @@ const newGameBtn = document.getElementById("newGameBtn");
 const characterBackBtn = document.getElementById("characterBackBtn");
 const startAdventureBtn = document.getElementById("startAdventureBtn");
 const backBtn = document.getElementById("backBtn");
+const monsterBtn = document.getElementById("monsterBtn");
+const monsterPanel = document.getElementById("monsterPanel");
+const closeMonsterPanel = document.getElementById("closeMonsterPanel");
+const monsterList = document.getElementById("monsterList");
+const itemsBtn = document.getElementById("itemsBtn");
+const inventoryPanel = document.getElementById("inventoryPanel");
+const closeInventoryBtn = document.getElementById("closeInventoryBtn");
+const inventoryGrid = document.getElementById("inventoryGrid");
 
 // BATTLE MENU ELEMENTS
 const battleMenuPanel = document.getElementById("battleMenuPanel");
@@ -30,6 +38,36 @@ const characterOptions = document.querySelectorAll(".character-option");
 
 // SELECTED CHARACTER
 let selectedCharacter = null;
+
+const monsterInfoPanel =
+    document.getElementById("monsterInfoPanel");
+
+const closeMonsterInfo =
+    document.getElementById("closeMonsterInfo");
+
+const infoMonsterSprite =
+    document.getElementById("infoMonsterSprite");
+
+const infoMonsterName =
+    document.getElementById("infoMonsterName");
+
+const infoMonsterDescription =
+    document.getElementById("infoMonsterDescription");
+
+const infoMonsterElement =
+    document.getElementById("infoMonsterElement");
+
+const infoMonsterLevel =
+    document.getElementById("infoMonsterLevel");
+
+const infoMonsterHp =
+    document.getElementById("infoMonsterHp");
+
+const infoMonsterAttack =
+    document.getElementById("infoMonsterAttack");
+
+const infoMonsterDefense =
+    document.getElementById("infoMonsterDefense");
 
 
 // OPEN CHARACTER SELECTION
@@ -189,9 +227,10 @@ const monsters = {
         name: "Tarsela",
         element: "Light",
         level: 1,
-        maxHp: 100,
+        maxHp: 35,
         attack: 15,
         defense: 10,
+        description: "A cheerful tarsier monster with magical wings and star-powered abilities.",
         sprite: "ASSETS/monsters/tarsela/idle.png"
     },
 
@@ -199,23 +238,195 @@ const monsters = {
         name: "Dagtwig",
         element: "Nature",
         level: 1,
-        maxHp: 90,
+        maxHp: 30,
         attack: 13,
         defense: 12,
+        description: "A small woodland rat monster that uses branches and nature-based attacks.",
         sprite: "ASSETS/monsters/dagtwig/idle.png"
+    },
+
+    hushus: {
+    name: "Hushus",
+    element: "Nature",
+    level: 2,
+    maxHp: 40,
+    attack: 4,
+    defense: 10,
+    description: "A playful dog monster wearing a bonnet. It uses howls, bones, and powerful bites in battle.",
+    sprite: "ASSETS/monsters/hushus/idle.png"
+}
+
+};
+
+// PLAYER MONSTER TEAM
+let playerTeam = [
+    {
+        ...monsters.tarsela,
+        currentHp: monsters.tarsela.maxHp,
+        exp: 0
     }
-};
+];
 
-// PLAYER AND ENEMY MONSTERS
-let playerMonster = {
-    ...monsters.tarsela,
-    currentHp: monsters.tarsela.maxHp
-};
+// ACTIVE PLAYER MONSTER
+let playerMonster = playerTeam[0];
 
+// DISPLAY MY MONSTERS
+function updateMyMonstersUI() {
+
+    monsterList.innerHTML = "";
+
+    playerTeam.forEach(function(monster, index) {
+
+        const monsterCard = document.createElement("div");
+        monsterCard.classList.add("my-monster-card");
+
+        const isActive = monster === playerMonster;
+
+        monsterCard.innerHTML = `
+            <img src="${monster.sprite}" alt="${monster.name}">
+
+            <div class="my-monster-details">
+                <h3>${monster.name}</h3>
+                <p>Lv. ${monster.level} · ${monster.element}</p>
+
+                <div class="monster-card-buttons">
+                    <button class="monster-info-button">ⓘ</button>
+
+                    ${
+                        isActive
+                        ? '<span class="active-monster-label">Active</span>'
+                        : '<button class="switch-monster-button">Switch</button>'
+                    }
+                </div>
+            </div>
+        `;
+
+        // INFO BUTTON
+        monsterCard.querySelector(".monster-info-button")
+            .addEventListener("click", function() {
+                showMonsterInfo(monster);
+            });
+
+        // SWITCH BUTTON
+        const switchButton =
+            monsterCard.querySelector(".switch-monster-button");
+
+        if (switchButton) {
+
+            switchButton.addEventListener("click", function() {
+
+                playerMonster = monster;
+
+                updatePlayerMonsterUI();
+                updateMyMonstersUI();
+
+                showBattleMessage(
+                    playerMonster.name + " is now your active monster!"
+                );
+
+            });
+
+        }
+
+        monsterList.appendChild(monsterCard);
+
+    });
+
+}
+
+// SHOW MONSTER INFORMATION
+function showMonsterInfo(monster) {
+
+    monsterInfoPanel.style.display = "block";
+
+    infoMonsterSprite.src = monster.sprite;
+    infoMonsterName.textContent = monster.name;
+    infoMonsterDescription.textContent = monster.description;
+
+    infoMonsterElement.textContent = monster.element;
+    infoMonsterLevel.textContent = monster.level;
+    infoMonsterHp.textContent =
+        monster.currentHp + " / " + monster.maxHp;
+
+    infoMonsterAttack.textContent = monster.attack;
+    infoMonsterDefense.textContent = monster.defense;
+
+}
+
+// OPEN AND CLOSE MY MONSTERS
+monsterBtn.addEventListener("click", function() {
+
+    updateMyMonstersUI();
+
+    if (monsterPanel.style.display === "block") {
+        monsterPanel.style.display = "none";
+    } else {
+        monsterPanel.style.display = "block";
+    }
+
+    monsterInfoPanel.style.display = "none";
+    inventoryPanel.style.display = "none";
+
+});
+
+// OPEN INVENTORY
+itemsBtn.addEventListener("click", function() {
+
+    // Close My Monsters panel
+    monsterPanel.style.display = "none";
+    monsterInfoPanel.style.display = "none";
+
+    // Toggle inventory
+    if (inventoryPanel.style.display === "block") {
+        inventoryPanel.style.display = "none";
+    } else {
+        inventoryPanel.style.display = "block";
+    }
+
+});
+
+// CLOSE INVENTORY
+closeInventoryBtn.addEventListener("click", function() {
+
+    inventoryPanel.style.display = "none";
+
+});
+
+// CREATE 16 INVENTORY SLOTS
+for (let i = 0; i < 16; i++) {
+
+    const slot = document.createElement("div");
+
+    slot.classList.add("inventory-slot");
+
+    inventoryGrid.appendChild(slot);
+
+}
+
+// CLOSE MY MONSTERS
+closeMonsterPanel.addEventListener("click", function() {
+
+    monsterPanel.style.display = "none";
+    monsterInfoPanel.style.display = "none";
+
+});
+
+// CLOSE MONSTER INFORMATION
+closeMonsterInfo.addEventListener("click", function() {
+
+    monsterInfoPanel.style.display = "none";
+
+});
+
+// ENEMY MONSTER
 let enemyMonster = {
     ...monsters.dagtwig,
     currentHp: monsters.dagtwig.maxHp
 };
+
+// MONSTER LEVEL SETTINGS
+const maxMonsterLevel = 10;
+const expToLevelUp = 100;
 
 
 // PLAYER MONSTER STATUS ELEMENTS
@@ -223,6 +434,8 @@ const playerMonsterName = document.getElementById("playerMonsterName");
 const playerMonsterLevel = document.getElementById("playerMonsterLevel");
 const playerHpText = document.getElementById("playerHpText");
 const playerHealthFill = document.getElementById("playerHealthFill");
+const playerExpFill = document.getElementById("playerExpFill");
+const playerExpText = document.getElementById("playerExpText");
 
 // ENEMY MONSTER STATUS ELEMENTS
 const enemyMonsterName = document.getElementById("enemyMonsterName");
@@ -249,6 +462,19 @@ function updatePlayerMonsterUI() {
 
     playerHealthFill.style.width = hpPercentage + "%";
 
+    // UPDATE EXP BAR
+const expPercentage =
+    (playerMonster.exp / expToLevelUp) * 100;
+
+playerExpFill.style.width = expPercentage + "%";
+
+playerExpText.textContent =
+    "EXP: " + playerMonster.exp + " / " + expToLevelUp;
+
+    // UPDATE ACTIVE MONSTER SPRITE
+    playerMonsterSprite.src = playerMonster.sprite;
+
+    updatePlayerSkills();
 }
 
 
@@ -284,6 +510,7 @@ const battleMessage = document.getElementById("battleMessage");
 let isPlayerTurn = true;
 let playerGuard = false;
 let parolCooldown = 0;
+let currentStage = 1;
 
 // TARSELA SKILL SETTINGS
 const skills = {
@@ -315,6 +542,121 @@ const skills = {
         critChance: 0.25
     }
 };
+
+// SKILL SETS FOR ALL MONSTERS
+const playerSkillSets = {
+
+    Tarsela: {
+    skill1: {
+        ...skills.starSpark,
+        sprite: "skill-2"
+    },
+
+    skill2: {
+        ...skills.wingSlash,
+        sprite: "skill-1"
+    },
+
+    skill3: {
+        ...skills.floralGuard,
+        sprite: "skill-3",
+        type: "guard"
+    },
+
+    skill4: {
+        ...skills.parolBurst,
+        sprite: "skill-4"
+    }
+},
+
+    Dagtwig: {
+        skill1: {
+            name: "Twig Slash",
+            power: 1,
+            missChance: 0.10,
+            critChance: 0.15,
+            sprite: "skill-1"
+        },
+
+        skill2: {
+            name: "Wooden Shot",
+            power: 1.2,
+            missChance: 0.10,
+            critChance: 0.15,
+            sprite: "skill-2"
+        },
+
+        skill3: {
+            name: "Nature Spin",
+            power: 1.5,
+            missChance: 0.10,
+            critChance: 0.20,
+            sprite: "skill-3"
+        },
+
+        skill4: {
+            name: "Forest Burst",
+            power: 2,
+            missChance: 0.10,
+            critChance: 0.25,
+            sprite: "skill-4"
+        }
+    },
+
+    Hushus: {
+        skill1: {
+            name: "Howl",
+            power: 1,
+            missChance: 0.10,
+            critChance: 0.15,
+            sprite: "skill-1"
+        },
+
+        skill2: {
+            name: "Throw Bone",
+            power: 1.2,
+            missChance: 0.10,
+            critChance: 0.15,
+            sprite: "skill-2"
+        },
+
+        skill3: {
+            name: "Buff",
+            power: 0,
+            missChance: 0,
+            critChance: 0,
+            sprite: "skill-3",
+            type: "guard"
+        },
+
+        skill4: {
+            name: "Bite",
+            power: 2,
+            missChance: 0.10,
+            critChance: 0.25,
+            sprite: "skill-4"
+        }
+    }
+
+};
+
+// CURRENT ACTIVE MONSTER SKILLS
+let currentSkills = skills;
+
+
+// UPDATE SKILL BUTTON NAMES
+function updatePlayerSkills() {
+
+    currentSkills = playerSkillSets[playerMonster.name];
+
+    skill1Btn.textContent = currentSkills.skill1.name;
+    skill2Btn.textContent = currentSkills.skill2.name;
+    skill3Btn.textContent = currentSkills.skill3.name;
+
+    document.getElementById("skill4Name").textContent =
+        currentSkills.skill4.name;
+
+}
 
 // DAMAGE CALCULATION
 function calculateDamage(attacker, defender, skill) {
@@ -400,6 +742,185 @@ function showBattleMessage(message) {
     battleMessage.textContent = message;
 }
 
+// BATTLE RESULT ELEMENTS
+const battleResult = document.getElementById("battleResult");
+const battleResultImage = document.getElementById("battleResultImage");
+const battleResultMessage = document.getElementById("battleResultMessage");
+const victoryChoices = document.getElementById("victoryChoices");
+const absorbBtn = document.getElementById("absorbBtn");
+const captureBtn = document.getElementById("captureBtn");
+
+// CAPTURE BUTTON EVENT
+captureBtn.addEventListener("click", function() {
+    captureMonster();
+});
+
+// ABSORB BUTTON EVENT
+absorbBtn.addEventListener("click", function() {
+    absorbMonster();
+});
+
+// SHOW BATTLE RESULT
+function showBattleResult(result) {
+
+    battleResult.style.display = "flex";
+
+    victoryChoices.style.display = "none";
+
+    if (result === "victory") {
+
+        gameScreen.classList.add("victory-state");
+        gameScreen.classList.remove("defeat-state");
+
+        battleResultImage.src = "ASSETS/victory.png";
+
+        battleResultMessage.textContent =
+            "You defeated Dagtwig! Choose your reward.";
+
+        victoryChoices.style.display = "flex";
+
+    } else {
+
+        gameScreen.classList.add("defeat-state");
+        gameScreen.classList.remove("victory-state");
+
+        battleResultImage.src = "ASSETS/defeat.png";
+
+        battleResultMessage.textContent =
+            "Your monster was defeated. Your adventure will restart.";
+
+    }
+
+}
+
+// CAPTURE MONSTER
+function captureMonster() {
+
+    // Check if team is already full
+    if (playerTeam.length >= 3) {
+        battleResultMessage.textContent =
+            "Your monster team is already full!";
+        return;
+    }
+
+    // Save defeated enemy to player team
+    const capturedMonster = {
+        ...enemyMonster,
+        currentHp: enemyMonster.maxHp,
+        exp: 0
+    };
+
+    playerTeam.push(capturedMonster);
+
+    // Keep Tarsela as the active monster
+    playerMonster = playerTeam[0];
+
+    // Move to the next stage
+    currentStage++;
+
+    // Prepare Hushus as the next enemy
+    enemyMonster = {
+        ...monsters.hushus,
+        currentHp: monsters.hushus.maxHp
+    };
+
+    // Update monster displays
+    updatePlayerMonsterUI();
+    updateEnemyMonsterUI();
+
+    // Close victory screen
+    battleResult.style.display = "none";
+    victoryChoices.style.display = "none";
+
+    gameScreen.classList.remove("victory-state");
+    gameScreen.classList.remove("defeat-state");
+
+    // Reset battle variables
+    isPlayerTurn = true;
+    playerGuard = false;
+    parolCooldown = 0;
+
+    ultimateCooldown.textContent = "";
+
+    // Update stage heading
+    document.querySelector(".stage-header").textContent =
+        "STAGE " + currentStage + ": DIVISORIA";
+
+    // Show next stage message
+    showBattleMessage(
+        "Dagtwig joined your team! Stage 2: Hushus approaches!"
+    );
+
+    // Make sure battle skills are ready
+    setSkillButtons(true);
+}
+
+// ABSORB DEFEATED MONSTER
+function absorbMonster() {
+
+    // Give EXP to active monster
+    playerMonster.exp += 50;
+
+    let message = playerMonster.name + " gained 50 EXP!";
+
+    // CHECK LEVEL UP
+    if (playerMonster.exp >= expToLevelUp &&
+        playerMonster.level < maxMonsterLevel) {
+
+        playerMonster.exp -= expToLevelUp;
+
+        playerMonster.level++;
+
+        playerMonster.maxHp += 5;
+        playerMonster.attack += 2;
+        playerMonster.defense += 1;
+
+        playerMonster.currentHp += 5;
+
+        message += " Level Up!";
+
+    }
+
+    // UPDATE MONSTER DISPLAY
+    updatePlayerMonsterUI();
+    updateMyMonstersUI();
+
+    // MOVE TO NEXT STAGE
+    currentStage++;
+
+    enemyMonster = {
+        ...monsters.hushus,
+        currentHp: monsters.hushus.maxHp
+    };
+
+    updateEnemyMonsterUI();
+
+    // CLOSE VICTORY SCREEN
+    battleResult.style.display = "none";
+    victoryChoices.style.display = "none";
+
+    gameScreen.classList.remove("victory-state");
+    gameScreen.classList.remove("defeat-state");
+
+    // RESET BATTLE VARIABLES
+    isPlayerTurn = true;
+    playerGuard = false;
+    parolCooldown = 0;
+
+    ultimateCooldown.textContent = "";
+
+    // UPDATE STAGE
+    document.querySelector(".stage-header").textContent =
+        "STAGE " + currentStage + ": DIVISORIA";
+
+    showBattleMessage(
+        message + " Stage " + currentStage + ": Hushus approaches!"
+    );
+
+    setSkillButtons(true);
+
+}
+
 
 // ENABLE OR DISABLE SKILL BUTTONS
 function setSkillButtons(enabled) {
@@ -422,9 +943,11 @@ async function playerUseSkill(skill, spriteName) {
     setSkillButtons(false);
 
     // FLORAL GUARD
-    if (skill === skills.floralGuard) {
+    if (skill.type === "guard") {
 
-        showBattleMessage("Tarsela used Floral Guard!");
+        showBattleMessage(
+    playerMonster.name + " used " + skill.name + "!"
+);
 
         await playMonsterAnimation(
             playerMonsterSprite,
@@ -439,7 +962,7 @@ async function playerUseSkill(skill, spriteName) {
     } else {
 
         // PAROL BURST COOLDOWN
-        if (skill === skills.parolBurst) {
+        if (skill.name === "Parol Burst") {
             parolCooldown = 3;
 
             ultimateCooldown.textContent = "Cooldown: 3 turns";
@@ -447,7 +970,7 @@ async function playerUseSkill(skill, spriteName) {
 
         // SHOW SKILL MESSAGE
         showBattleMessage(
-            "Tarsela is preparing " + skill.name + "!"
+            playerMonster.name + " is preparing " + skill.name + "!"
         );
 
         // DASH ANIMATION
@@ -496,12 +1019,12 @@ async function playerUseSkill(skill, spriteName) {
     // CHECK IF ENEMY IS DEFEATED
     if (enemyMonster.currentHp <= 0) {
 
-        showBattleMessage("Dagtwig was defeated!");
+    setSkillButtons(false);
 
-        setSkillButtons(false);
+    showBattleResult("victory");
 
-        return;
-    }
+    return;
+}
 
     // WAIT BEFORE ENEMY TURN
     await new Promise(function(resolve) {
@@ -534,35 +1057,30 @@ async function playerUseSkill(skill, spriteName) {
 
 }
 
-// ENEMY TURN
-async function enemyTurn() {
-
-    // Dito ilalagay ang buong enemyTurn() code
-
-}
-
 // SKILL BUTTON EVENTS
 
 skill1Btn.addEventListener("click", function() {
-    playerUseSkill(skills.starSpark, "skill-2");
+    playerUseSkill(currentSkills.skill1, currentSkills.skill1.sprite);
 });
 
 skill2Btn.addEventListener("click", function() {
-    playerUseSkill(skills.wingSlash, "skill-1");
+    playerUseSkill(currentSkills.skill2, currentSkills.skill2.sprite);
 });
 
 skill3Btn.addEventListener("click", function() {
-    playerUseSkill(skills.floralGuard, "skill-3");
+    playerUseSkill(currentSkills.skill3, currentSkills.skill3.sprite);
 });
 
 skill4Btn.addEventListener("click", function() {
 
     if (parolCooldown > 0) {
-        showBattleMessage("Parol Burst is still on cooldown!");
+        showBattleMessage(
+            currentSkills.skill4.name + " is still on cooldown!"
+        );
         return;
     }
 
-    playerUseSkill(skills.parolBurst, "skill-4");
+    playerUseSkill(currentSkills.skill4, currentSkills.skill4.sprite);
 
 });
 
@@ -573,17 +1091,34 @@ async function enemyTurn() {
         return;
     }
 
-    const enemySkills = [
+    let enemySkills;
+
+if (enemyMonster.name === "Dagtwig") {
+
+    enemySkills = [
         { name: "Twig Slash", power: 1, sprite: "skill-1" },
         { name: "Wooden Shot", power: 1.2, sprite: "skill-2" },
         { name: "Nature Spin", power: 1.5, sprite: "skill-3" },
         { name: "Forest Burst", power: 2, sprite: "skill-4" }
     ];
 
+} else if (enemyMonster.name === "Hushus") {
+
+    enemySkills = [
+        { name: "Howl", power: 1, sprite: "skill-1" },
+        { name: "Throw Bone", power: 1.2, sprite: "skill-2" },
+        { name: "Buff", power: 0, sprite: "skill-3" },
+        { name: "Bite", power: 2, sprite: "skill-4" }
+    ];
+
+}
+
     const randomIndex = Math.floor(Math.random() * enemySkills.length);
     const chosenSkill = enemySkills[randomIndex];
 
-    showBattleMessage("Dagtwig is preparing " + chosenSkill.name + "!");
+    showBattleMessage(
+    enemyMonster.name + " is preparing " + chosenSkill.name + "!"
+);
 
     await playMonsterAnimation(
         enemyMonsterSprite,
@@ -628,38 +1163,16 @@ async function enemyTurn() {
     updatePlayerMonsterUI();
 
     showBattleMessage(
-        "Dagtwig used " + chosenSkill.name + "! " +
+        enemyMonster.name + " used " + chosenSkill.name + "! " +
         damageResult.message +
         " Damage: " + damageResult.damage
     );
 
     if (playerMonster.currentHp <= 0) {
-        showBattleMessage("Tarsela was defeated!");
-        setSkillButtons(false);
-    }
 
-    // SKILL BUTTON EVENTS
+    setSkillButtons(false);
 
-skill1Btn.addEventListener("click", function() {
-    playerUseSkill(skills.starSpark, "skill-2");
-});
+    showBattleResult("defeat");
 
-skill2Btn.addEventListener("click", function() {
-    playerUseSkill(skills.wingSlash, "skill-1");
-});
-
-skill3Btn.addEventListener("click", function() {
-    playerUseSkill(skills.floralGuard, "skill-3");
-});
-
-skill4Btn.addEventListener("click", function() {
-
-    if (parolCooldown > 0) {
-        showBattleMessage("Parol Burst is still on cooldown!");
-        return;
-    }
-
-    playerUseSkill(skills.parolBurst, "skill-4");
-
-});
+}
 }
