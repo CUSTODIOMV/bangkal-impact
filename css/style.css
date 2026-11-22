@@ -228,17 +228,54 @@ button:hover {
 
 /* HOW TO PLAY SCREEN */
 .how-to-play-screen {
-    padding: 20px;
+    display: none;
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    min-height: 100vh;
+    min-height: 100svh;
+    margin: auto;
+    padding: 90px 40px 40px;
+    overflow-y: auto;
+    background: rgba(48, 72, 59, 0.96);
+    border: 1px solid #627D60;
+    border-radius: 10px;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.8;
 }
 
-.how-to-play-screen h1 {
+
+.how-to-play-screen h2 {
+    margin-top: 18px;
     color: #E8D7A8;
-    margin-bottom: 12px;
 }
 
-.how-to-play-screen > p {
-    color: #B5C4B7;
-    margin-bottom: 25px;
+.how-to-play-screen p {
+    max-width: 650px;
+    color: #C4D1C5;
+}
+
+.how-to-play-screen > button {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    width: 150px;
+}
+
+body.how-to-play-active .game-header {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .how-to-play-screen {
+        padding: 85px 20px 30px;
+    }
+
+    .how-to-play-screen > button {
+        top: 20px;
+        left: 20px;
+    }
 }
 
 

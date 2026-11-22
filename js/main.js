@@ -15,6 +15,7 @@ const saveGameBtn = document.getElementById("saveGameBtn");
 
 // BUTTONS
 const newGameBtn = document.getElementById("newGameBtn");
+const settingsBtn = document.getElementById("settingsBtn");
 const howToPlayBtn = document.getElementById("howToPlayBtn");
 const characterBackBtn = document.getElementById("characterBackBtn");
 const startAdventureBtn = document.getElementById("startAdventureBtn");
@@ -41,6 +42,7 @@ const exitGameBtn = document.getElementById("exitGameBtn");
 // SETTINGS ELEMENTS
 const settingsScreen = document.getElementById("settingsScreen");
 const settingsBackBtn = document.getElementById("settingsBackBtn");
+let settingsReturnScreen = "menu";
 
 // LEADERBOARD ELEMENTS
 const leaderboardScreen = document.getElementById("leaderboardScreen");
@@ -99,11 +101,57 @@ const infoMonsterDefense =
 // GAME MUSIC
 const menuMusic = document.getElementById("menuMusic");
 const battleMusic = document.getElementById("battleMusic");
+const musicToggle = document.getElementById("musicToggle");
+const soundToggle = document.getElementById("soundToggle");
+
+let backgroundMusicEnabled =
+    localStorage.getItem("backgroundMusicEnabled") !== "false";
+let soundEffectsEnabled =
+    localStorage.getItem("soundEffectsEnabled") !== "false";
+
+musicToggle.checked = backgroundMusicEnabled;
+soundToggle.checked = soundEffectsEnabled;
+
+let soundEffectContext = null;
+
+function playSoundEffect() {
+    if (!soundEffectsEnabled) {
+        return;
+    }
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) {
+        return;
+    }
+
+    soundEffectContext = soundEffectContext || new AudioContext();
+
+    const oscillator = soundEffectContext.createOscillator();
+    const gain = soundEffectContext.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.value = 420;
+    gain.gain.setValueAtTime(0.04, soundEffectContext.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        soundEffectContext.currentTime + 0.08
+    );
+
+    oscillator.connect(gain);
+    gain.connect(soundEffectContext.destination);
+    oscillator.start();
+    oscillator.stop(soundEffectContext.currentTime + 0.08);
+}
 
 // PLAY MENU MUSIC
 function playMenuMusic() {
     battleMusic.pause();
     battleMusic.currentTime = 0;
+
+    if (!backgroundMusicEnabled) {
+        menuMusic.pause();
+        return;
+    }
 
     menuMusic.play().catch(function(error) {
         console.log("Menu music waiting for user interaction.");
@@ -127,12 +175,50 @@ function playBattleMusic() {
     menuMusic.pause();
     menuMusic.currentTime = 0;
 
-    battleMusic.play();
+    if (backgroundMusicEnabled) {
+        battleMusic.play().catch(function(error) {
+            console.log("Battle music waiting for user interaction.");
+        });
+    }
 }
 
 // MUSIC VOLUME
 menuMusic.volume = 0.4;
 battleMusic.volume = 0.4;
+
+musicToggle.addEventListener("change", function() {
+    backgroundMusicEnabled = musicToggle.checked;
+    localStorage.setItem(
+        "backgroundMusicEnabled",
+        backgroundMusicEnabled.toString()
+    );
+
+    if (backgroundMusicEnabled) {
+        if (gameScreen.style.display === "block" &&
+            gameScreen.classList.contains("battle-started")) {
+            playBattleMusic();
+        } else {
+            playMenuMusic();
+        }
+    } else {
+        menuMusic.pause();
+        battleMusic.pause();
+    }
+});
+
+soundToggle.addEventListener("change", function() {
+    soundEffectsEnabled = soundToggle.checked;
+    localStorage.setItem(
+        "soundEffectsEnabled",
+        soundEffectsEnabled.toString()
+    );
+});
+
+document.addEventListener("click", function(event) {
+    if (event.target.closest("button")) {
+        playSoundEffect();
+    }
+});
 
 // OPEN CHARACTER SELECTION
 newGameBtn.addEventListener("click", function() {
@@ -207,10 +293,31 @@ updateEnemyMonsterUI();
 howToPlayBtn.addEventListener("click", function() {
 
     mainMenu.style.display = "none";
-    howToPlayScreen.style.display = "block";
+    characterSelection.style.display = "none";
+    gameScreen.style.display = "none";
+    settingsScreen.style.display = "none";
+    saveSlotsScreen.style.display = "none";
+    leaderboardScreen.style.display = "none";
 
     document.body.classList.add("how-to-play-active");
+    howToPlayScreen.style.display = "flex";
+});
 
+// BACK TO SETTINGS FROM HOW TO PLAY
+howToPlayBackBtn.addEventListener("click", function() {
+
+    howToPlayScreen.style.display = "none";
+    document.body.classList.remove("how-to-play-active");
+    settingsScreen.style.display = "block";
+
+});
+
+// OPEN SETTINGS FROM MAIN MENU
+settingsBtn.addEventListener("click", function() {
+
+    settingsReturnScreen = "menu";
+    mainMenu.style.display = "none";
+    settingsScreen.style.display = "block";
 
 });
 
@@ -344,6 +451,7 @@ resumeBtn.addEventListener("click", function() {
 // OPEN SETTINGS FROM BATTLE
 battleSettingsBtn.addEventListener("click", function() {
 
+    settingsReturnScreen = "battle";
     gameScreen.style.display = "none";
     settingsScreen.style.display = "block";
 
@@ -356,7 +464,13 @@ battleSettingsBtn.addEventListener("click", function() {
 settingsBackBtn.addEventListener("click", function() {
 
     settingsScreen.style.display = "none";
-    gameScreen.style.display = "block";
+    
+    if (settingsReturnScreen === "battle") {
+        gameScreen.style.display = "block";
+    } else {
+        mainMenu.style.display = "block";
+        playMenuMusic();
+    }
 
 });
 
