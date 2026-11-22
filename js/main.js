@@ -4,6 +4,15 @@ const mainMenu = document.getElementById("mainMenu");
 const characterSelection = document.getElementById("characterSelection");
 const gameScreen = document.getElementById("gameScreen");
 
+// SAVE SLOTS ELEMENTS
+const saveSlotsScreen = document.getElementById("saveSlotsScreen");
+const saveSlotList = document.getElementById("saveSlotList");
+const saveSlotsBackBtn = document.getElementById("saveSlotsBackBtn");
+
+// SAVE BUTTONS
+const continueBtn = document.getElementById("continueBtn");
+const saveGameBtn = document.getElementById("saveGameBtn");
+
 // BUTTONS
 const newGameBtn = document.getElementById("newGameBtn");
 const howToPlayBtn = document.getElementById("howToPlayBtn");
@@ -32,6 +41,19 @@ const exitGameBtn = document.getElementById("exitGameBtn");
 // SETTINGS ELEMENTS
 const settingsScreen = document.getElementById("settingsScreen");
 const settingsBackBtn = document.getElementById("settingsBackBtn");
+
+// LEADERBOARD ELEMENTS
+const leaderboardScreen = document.getElementById("leaderboardScreen");
+const leaderboardList = document.getElementById("leaderboardList");
+const leaderboardBtn = document.getElementById("leaderboardBtn");
+const leaderboardBackBtn = document.getElementById("leaderboardBackBtn");
+
+// LEADERBOARD DATA
+const leaderboardStorageKey = "bangkalImpactLeaderboard";
+
+let leaderboardData = JSON.parse(
+    localStorage.getItem(leaderboardStorageKey)
+) || [];
 
 // PLAYER INPUT
 const playerNameInput = document.getElementById("playerNameInput");
@@ -74,9 +96,48 @@ const infoMonsterAttack =
 const infoMonsterDefense =
     document.getElementById("infoMonsterDefense");
 
+// GAME MUSIC
+const menuMusic = document.getElementById("menuMusic");
+const battleMusic = document.getElementById("battleMusic");
+
+// PLAY MENU MUSIC
+function playMenuMusic() {
+    battleMusic.pause();
+    battleMusic.currentTime = 0;
+
+    menuMusic.play().catch(function(error) {
+        console.log("Menu music waiting for user interaction.");
+    });
+}
+
+// START MENU MUSIC WHEN PAGE LOADS
+document.addEventListener("DOMContentLoaded", function() {
+    playMenuMusic();
+});
+
+// START MUSIC AFTER FIRST USER INTERACTION
+document.addEventListener("click", function() {
+    if (menuMusic.paused && gameScreen.style.display === "none") {
+        playMenuMusic();
+    }
+}, { once: true });
+
+// PLAY BATTLE MUSIC
+function playBattleMusic() {
+    menuMusic.pause();
+    menuMusic.currentTime = 0;
+
+    battleMusic.play();
+}
+
+// MUSIC VOLUME
+menuMusic.volume = 0.4;
+battleMusic.volume = 0.4;
 
 // OPEN CHARACTER SELECTION
 newGameBtn.addEventListener("click", function() {
+
+playMenuMusic();
 
     mainMenu.style.display = "none";
     characterSelection.style.display = "block";
@@ -86,6 +147,51 @@ newGameBtn.addEventListener("click", function() {
     // Reset selection for a new game
     selectedCharacter = null;
     playerNameInput.value = "";
+
+
+// RESET PREVIOUS ADVENTURE
+playerTeam = [
+    {
+        ...monsters.tarsela,
+        currentHp: monsters.tarsela.maxHp,
+        exp: 0
+    }
+];
+
+playerMonster = playerTeam[0];
+
+enemyMonster = {
+    ...monsters.dagtwig,
+    currentHp: monsters.dagtwig.maxHp
+};
+
+currentStage = 1;
+
+isPlayerTurn = true;
+playerGuard = false;
+parolCooldown = 0;
+
+// RESET BATTLE SCREEN STATE
+gameScreen.classList.remove("battle-started");
+gameScreen.classList.remove("victory-state");
+gameScreen.classList.remove("defeat-state");
+
+battleResult.style.display = "none";
+victoryChoices.style.display = "none";
+
+monsterPanel.style.display = "none";
+monsterInfoPanel.style.display = "none";
+inventoryPanel.style.display = "none";
+
+battleMenuPanel.style.display = "none";
+
+ultimateCooldown.textContent = "";
+
+setSkillButtons(true);
+
+updatePlayerMonsterUI();
+updateEnemyMonsterUI();
+
 
     characterButtons.forEach(function(button) {
         button.textContent = "Select";
@@ -108,6 +214,33 @@ howToPlayBtn.addEventListener("click", function() {
 
 });
 
+// BACK TO MAIN MENU FROM CHARACTER SELECTION
+characterBackBtn.addEventListener("click", function() {
+
+    characterSelection.style.display = "none";
+    mainMenu.style.display = "block";
+
+    document.body.classList.remove("character-selection-active");
+
+});
+
+// BACK BUTTON FROM SAVE SLOTS
+saveSlotsBackBtn.addEventListener("click", function() {
+    saveSlotsScreen.style.display = "none";
+    document.body.classList.remove("save-slots-active");
+
+    if (saveSlotsReturnScreen === "battle") {
+
+        gameScreen.style.display = "block";
+        battleMenuPanel.style.display = "block";
+
+    } else {
+
+        mainMenu.style.display = "block";
+
+    }
+
+});
 
 // OPEN AND CLOSE BATTLE MENU
 backBtn.addEventListener("click", function() {
@@ -185,6 +318,7 @@ startAdventureBtn.addEventListener("click", function() {
     document.body.classList.add("battle-active");
     gameScreen.classList.remove("battle-started");
 
+    playMenuMusic();
 });
 
 
@@ -193,7 +327,11 @@ const startBattleBtn = document.getElementById("startBattleBtn");
 
 startBattleBtn.addEventListener("click", function() {
     gameScreen.classList.add("battle-started");
+
+    playBattleMusic();
 });
+
+
 
 // RESUME BATTLE
 resumeBtn.addEventListener("click", function() {
@@ -234,6 +372,20 @@ exitGameBtn.addEventListener("click", function() {
 
     battleMenuPanel.style.display = "none";
 
+    playMenuMusic();
+
+
+    
+});
+
+// CONTINUE BUTTON
+continueBtn.addEventListener("click", function() {
+    openSaveSlots("load");
+});
+
+// SAVE GAME BUTTON
+saveGameBtn.addEventListener("click", function() {
+    openSaveSlots("save");
 });
 
 
@@ -266,7 +418,7 @@ const monsters = {
     element: "Nature",
     level: 2,
     maxHp: 40,
-    attack: 4,
+    attack: 10,
     defense: 10,
     description: "A playful dog monster wearing a bonnet. It uses howls, bones, and powerful bites in battle.",
     sprite: "ASSETS/monsters/hushus/idle.png"
@@ -528,6 +680,400 @@ let playerGuard = false;
 let parolCooldown = 0;
 let currentStage = 1;
 
+// SAVE SLOT DATA
+const totalSaveSlots = 3;
+const saveStorageKey = "bangkalImpactSaveSlots";
+
+let saveSlots = JSON.parse(
+    localStorage.getItem(saveStorageKey)
+) || [null, null, null];
+
+let saveScreenMode = "load";
+let saveSlotsReturnScreen = "main";
+
+// OPEN SAVE SLOTS SCREEN
+function openSaveSlots(mode) {
+
+    saveScreenMode = mode;
+
+    mainMenu.style.display = "none";
+    characterSelection.style.display = "none";
+    gameScreen.style.display = "none";
+
+    saveSlotsScreen.style.display = "flex";
+document.body.classList.add("save-slots-active");
+
+    displaySaveSlots();
+
+    if (mode === "load") {
+        saveSlotsBackBtn.textContent = "← Back to Menu";
+        saveSlotsReturnScreen = "main";
+    } else {
+        saveSlotsBackBtn.textContent = "← Back to Battle";
+        saveSlotsReturnScreen = "battle";
+    }
+}
+
+
+// DISPLAY SAVE SLOTS
+function displaySaveSlots() {
+
+    saveSlotList.innerHTML = "";
+
+    for (let i = 0; i < totalSaveSlots; i++) {
+
+        const slot = saveSlots[i];
+
+        const slotCard = document.createElement("div");
+        slotCard.className = "save-slot";
+
+        slotCard.innerHTML = `
+            <div class="save-slot-info">
+                <h3>Save Slot ${i + 1}</h3>
+
+                ${
+                    slot
+                    ? `
+                        <p>Player: ${slot.playerName}</p>
+                        <p>Character: ${slot.selectedCharacter}</p>
+                        <p>Stage: ${slot.currentStage}</p>
+                        <p>Saved: ${slot.dateSaved}</p>
+                    `
+                    : `<p>Empty Slot</p>`
+                }
+            </div>
+
+            <button class="slot-action-button">
+                ${
+                    saveScreenMode === "load"
+                    ? (slot ? "Load" : "Empty")
+                    : "Save"
+                }
+            </button>
+        `;
+
+        const actionButton =
+            slotCard.querySelector(".slot-action-button");
+
+        // EMPTY SLOT CANNOT BE LOADED
+        if (saveScreenMode === "load" && !slot) {
+            actionButton.disabled = true;
+        }
+
+        // SLOT BUTTON ACTION
+        actionButton.addEventListener("click", function() {
+
+            if (saveScreenMode === "save") {
+
+                if (slot && !confirm("Overwrite this save slot?")) {
+                    return;
+                }
+
+                saveGameToSlot(i);
+
+            } else if (saveScreenMode === "load" && slot) {
+
+                loadGameFromSlot(i);
+
+            }
+
+        });
+
+        saveSlotList.appendChild(slotCard);
+    }
+}
+
+
+// SAVE GAME TO SELECTED SLOT
+function saveGameToSlot(index) {
+
+    const activeMonsterIndex =
+        playerTeam.indexOf(playerMonster);
+
+    const saveData = {
+
+        playerName: localStorage.getItem("playerName"),
+        selectedCharacter: selectedCharacter,
+
+        currentStage: currentStage,
+
+        playerTeam: JSON.parse(JSON.stringify(playerTeam)),
+        activeMonsterIndex: activeMonsterIndex,
+
+        enemyMonster: JSON.parse(JSON.stringify(enemyMonster)),
+
+        isPlayerTurn: isPlayerTurn,
+        playerGuard: playerGuard,
+        parolCooldown: parolCooldown,
+
+        battleStarted: gameScreen.classList.contains("battle-started"),
+
+        dateSaved: new Date().toLocaleString()
+
+    };
+
+    saveSlots[index] = saveData;
+
+    localStorage.setItem(
+        saveStorageKey,
+        JSON.stringify(saveSlots)
+    );
+
+    alert("Game saved successfully!");
+
+    displaySaveSlots();
+}
+
+
+// LOAD GAME FROM SELECTED SLOT
+function loadGameFromSlot(index) {
+
+    const saveData = saveSlots[index];
+
+    if (!saveData) {
+        alert("This save slot is empty!");
+        return;
+    }
+
+    // RESTORE PLAYER DATA
+    localStorage.setItem("playerName", saveData.playerName);
+    localStorage.setItem("playerCharacter", saveData.selectedCharacter);
+
+    selectedCharacter = saveData.selectedCharacter;
+
+    playerNameDisplay.textContent = saveData.playerName;
+    playerNameInput.value = saveData.playerName;
+
+    // RESTORE MONSTER TEAM
+    playerTeam = JSON.parse(JSON.stringify(saveData.playerTeam));
+
+    playerMonster = playerTeam[saveData.activeMonsterIndex];
+
+    // RESTORE ENEMY
+    enemyMonster = JSON.parse(JSON.stringify(saveData.enemyMonster));
+
+    // RESTORE STAGE
+    currentStage = saveData.currentStage;
+
+    // RESTORE BATTLE VARIABLES
+    isPlayerTurn = saveData.isPlayerTurn;
+    playerGuard = saveData.playerGuard;
+    parolCooldown = saveData.parolCooldown;
+
+    // RESTORE BATTLE SCREEN
+    saveSlotsScreen.style.display = "none";
+    document.body.classList.remove("save-slots-active");
+    mainMenu.style.display = "none";
+    characterSelection.style.display = "none";
+    settingsScreen.style.display = "none";
+    gameScreen.style.display = "block";
+
+    battleMenuPanel.style.display = "none";
+
+    document.body.classList.remove("character-selection-active");
+    document.body.classList.add("battle-active");
+
+    if (saveData.battleStarted) {
+        gameScreen.classList.add("battle-started");
+        playBattleMusic();
+    } else {
+        gameScreen.classList.remove("battle-started");
+        playMenuMusic();
+    }
+
+    // RESTORE MONSTER DISPLAYS
+    updatePlayerMonsterUI();
+    updateEnemyMonsterUI();
+    updateMyMonstersUI();
+
+    // RESTORE STAGE TITLE
+    document.querySelector(".stage-header").textContent =
+        "STAGE " + currentStage + ": DIVISORIA";
+
+    // RESTORE COOLDOWN DISPLAY
+    ultimateCooldown.textContent =
+        parolCooldown > 0
+        ? "Cooldown: " + parolCooldown + " turns"
+        : "";
+
+    // CLOSE OTHER PANELS
+    monsterPanel.style.display = "none";
+    monsterInfoPanel.style.display = "none";
+    inventoryPanel.style.display = "none";
+
+    // ENABLE SKILLS IF PLAYER'S TURN
+    setSkillButtons(isPlayerTurn);
+
+    showBattleMessage("Welcome back, " + saveData.playerName + "!");
+
+}
+
+
+// GET STAGE LOCATION
+function getStageLocation(stage) {
+
+    if (stage <= 5) {
+        return "Divisoria";
+    } else if (stage <= 9) {
+        return "United Nations";
+    } else {
+        return "Bangkal";
+    }
+
+}
+
+// RECORD PLAYER RESULT AFTER DEFEAT
+function recordLeaderboardResult() {
+
+    const playerName =
+        (localStorage.getItem("playerName") || "Player").trim();
+
+    const result = {
+        playerName: playerName,
+        monsterLevel: playerMonster.level,
+        stage: currentStage,
+        location: getStageLocation(currentStage),
+        date: new Date().toLocaleDateString()
+    };
+
+    // FIND EXISTING PLAYER RECORD
+    const existingIndex = leaderboardData.findIndex(function(entry) {
+        return entry.playerName.toLowerCase() === playerName.toLowerCase();
+    });
+
+    if (existingIndex !== -1) {
+
+        const oldRecord = leaderboardData[existingIndex];
+
+        // KEEP THE BETTER SCORE
+        if (
+            result.stage < oldRecord.stage ||
+            (
+                result.stage === oldRecord.stage &&
+                result.monsterLevel <= oldRecord.monsterLevel
+            )
+        ) {
+            return;
+        }
+
+        leaderboardData.splice(existingIndex, 1);
+
+    }
+
+    // ADD NEW RESULT
+    leaderboardData.push(result);
+
+    // SORT HIGHEST STAGE FIRST
+    leaderboardData.sort(function(a, b) {
+
+        if (b.stage !== a.stage) {
+            return b.stage - a.stage;
+        }
+
+        return b.monsterLevel - a.monsterLevel;
+
+    });
+
+    // KEEP TOP 10 ONLY
+    leaderboardData = leaderboardData.slice(0, 10);
+
+    // SAVE TO LOCAL STORAGE
+    localStorage.setItem(
+        leaderboardStorageKey,
+        JSON.stringify(leaderboardData)
+    );
+
+}
+
+
+// DISPLAY LEADERBOARD
+function displayLeaderboard() {
+
+    leaderboardList.innerHTML = "";
+
+    if (leaderboardData.length === 0) {
+        leaderboardList.textContent = "No scores recorded yet.";
+        return;
+    }
+
+    leaderboardData.forEach(function(player, index) {
+
+        const playerEntry = document.createElement("div");
+        playerEntry.className = "leaderboard-entry";
+
+        const rank = document.createElement("h3");
+        rank.textContent = "#" + (index + 1);
+
+        const playerInfo = document.createElement("div");
+        playerInfo.className = "leaderboard-player-info";
+
+        const name = document.createElement("strong");
+        name.textContent = player.playerName;
+
+        const details = document.createElement("p");
+        details.textContent =
+            "Level " + player.monsterLevel +
+            " · Stage " + player.stage +
+            ": " + player.location;
+
+        const date = document.createElement("small");
+        date.textContent = "Recorded: " + player.date;
+
+        playerInfo.appendChild(name);
+        playerInfo.appendChild(details);
+        playerInfo.appendChild(date);
+
+        const score = document.createElement("div");
+        score.className = "leaderboard-score";
+
+        const scoreNumber = document.createElement("strong");
+        scoreNumber.textContent = player.stage;
+
+        const scoreLabel = document.createElement("small");
+        scoreLabel.textContent = "SCORE";
+
+        score.appendChild(scoreNumber);
+        score.appendChild(scoreLabel);
+
+        playerEntry.appendChild(rank);
+        playerEntry.appendChild(playerInfo);
+        playerEntry.appendChild(score);
+
+        leaderboardList.appendChild(playerEntry);
+
+    });
+
+}
+
+// OPEN LEADERBOARD
+leaderboardBtn.addEventListener("click", function() {
+
+    mainMenu.style.display = "none";
+    characterSelection.style.display = "none";
+    gameScreen.style.display = "none";
+    settingsScreen.style.display = "none";
+    saveSlotsScreen.style.display = "none";
+
+    document.body.classList.add("leaderboard-active");
+
+    leaderboardScreen.style.display = "flex";
+
+    displayLeaderboard();
+
+});
+
+// BACK TO MAIN MENU FROM LEADERBOARD
+leaderboardBackBtn.addEventListener("click", function() {
+
+    leaderboardScreen.style.display = "none";
+
+    document.body.classList.remove("leaderboard-active");
+
+    mainMenu.style.display = "block";
+
+});
+
+
 // TARSELA SKILL SETTINGS
 const skills = {
     starSpark: {
@@ -765,6 +1311,9 @@ const battleResultMessage = document.getElementById("battleResultMessage");
 const victoryChoices = document.getElementById("victoryChoices");
 const absorbBtn = document.getElementById("absorbBtn");
 const captureBtn = document.getElementById("captureBtn");
+// DEFEAT ELEMENTS
+const defeatChoices = document.getElementById("defeatChoices");
+const restartBtn = document.getElementById("restartBtn");
 
 // CAPTURE BUTTON EVENT
 captureBtn.addEventListener("click", function() {
@@ -781,7 +1330,8 @@ function showBattleResult(result) {
 
     battleResult.style.display = "flex";
 
-    victoryChoices.style.display = "none";
+victoryChoices.style.display = "none";
+defeatChoices.style.display = "none";
 
     if (result === "victory") {
 
@@ -805,9 +1355,75 @@ function showBattleResult(result) {
         battleResultMessage.textContent =
             "Your monster was defeated. Your adventure will restart.";
 
+// RECORD LEADERBOARD RESULT
+recordLeaderboardResult();
+defeatChoices.style.display = "flex";
+
     }
 
 }
+
+// RESTART ADVENTURE
+restartBtn.addEventListener("click", function() {
+
+    // RESET PLAYER MONSTER
+    playerTeam = [
+        {
+            ...monsters.tarsela,
+            currentHp: monsters.tarsela.maxHp,
+            exp: 0
+        }
+    ];
+
+    playerMonster = playerTeam[0];
+
+    // RESET ENEMY
+    enemyMonster = {
+        ...monsters.dagtwig,
+        currentHp: monsters.dagtwig.maxHp
+    };
+
+    // RESET STAGE AND BATTLE VARIABLES
+    currentStage = 1;
+    isPlayerTurn = true;
+    playerGuard = false;
+    parolCooldown = 0;
+
+    // CLOSE DEFEAT SCREEN
+    battleResult.style.display = "none";
+    defeatChoices.style.display = "none";
+    victoryChoices.style.display = "none";
+
+    // RESET BATTLE SCREEN
+    gameScreen.classList.remove("defeat-state");
+    gameScreen.classList.remove("victory-state");
+    gameScreen.classList.remove("battle-started");
+
+    // CLOSE OTHER PANELS
+    monsterPanel.style.display = "none";
+    monsterInfoPanel.style.display = "none";
+    inventoryPanel.style.display = "none";
+    battleMenuPanel.style.display = "none";
+
+    // RESET STAGE TITLE
+    document.querySelector(".stage-header").textContent =
+        "STAGE 1: DIVISORIA";
+
+    // UPDATE MONSTER DISPLAYS
+    updatePlayerMonsterUI();
+    updateEnemyMonsterUI();
+    updateMyMonstersUI();
+
+    // RESET SKILLS
+    ultimateCooldown.textContent = "";
+    setSkillButtons(true);
+
+    // RETURN TO PRE-BATTLE PHASE
+    showBattleMessage("Your adventure begins again!");
+
+    playMenuMusic();
+
+});
 
 // CAPTURE MONSTER
 function captureMonster() {
