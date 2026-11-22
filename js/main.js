@@ -6,6 +6,7 @@ const gameScreen = document.getElementById("gameScreen");
 
 // BUTTONS
 const newGameBtn = document.getElementById("newGameBtn");
+const howToPlayBtn = document.getElementById("howToPlayBtn");
 const characterBackBtn = document.getElementById("characterBackBtn");
 const startAdventureBtn = document.getElementById("startAdventureBtn");
 const backBtn = document.getElementById("backBtn");
@@ -17,6 +18,10 @@ const itemsBtn = document.getElementById("itemsBtn");
 const inventoryPanel = document.getElementById("inventoryPanel");
 const closeInventoryBtn = document.getElementById("closeInventoryBtn");
 const inventoryGrid = document.getElementById("inventoryGrid");
+
+// HOW TO PLAY ELEMENTS
+const howToPlayScreen = document.getElementById("howToPlayScreen");
+const howToPlayBackBtn = document.getElementById("howToPlayBackBtn");
 
 // BATTLE MENU ELEMENTS
 const battleMenuPanel = document.getElementById("battleMenuPanel");
@@ -89,6 +94,17 @@ newGameBtn.addEventListener("click", function() {
     characterOptions.forEach(function(option) {
         option.classList.remove("selected");
     });
+
+});
+
+// OPEN HOW TO PLAY
+howToPlayBtn.addEventListener("click", function() {
+
+    mainMenu.style.display = "none";
+    howToPlayScreen.style.display = "block";
+
+    document.body.classList.add("how-to-play-active");
+
 
 });
 
