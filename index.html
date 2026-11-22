@@ -117,98 +117,122 @@
         <button id="battleSettingsBtn">Settings</button>
         <button id="exitGameBtn">Exit Game</button>
     </div>
+<!-- STAGE INFORMATION -->
+<div class="stage-header">
+    <h2>STAGE 1: DIVISORIA</h2>
+    <p>Prepare for your first battle!</p>
+</div>
 
-    <!-- STAGE INFORMATION -->
-    <div class="stage-header">
-        <h2>STAGE 1: DIVISORIA</h2>
-        <p>Prepare for your first battle!</p>
-    </div>
-
-    
 <!-- BATTLE STATUS -->
 <div class="battle-status">
 
     <div class="monster-status player-status">
-
-    <div class="monster-details">
-        <h3 id="playerMonsterName">Tarsela</h3>
-        <p>Lv. <span id="playerMonsterLevel">1</span></p>
-    </div>
-
-    <div class="health-info">
-        <div class="health-bar">
-            <div class="health-fill" id="playerHealthFill"></div>
+        <div class="monster-details">
+            <h3 id="playerMonsterName">Tarsela</h3>
+            <p>Lv. <span id="playerMonsterLevel">1</span></p>
         </div>
 
-        <p id="playerHpText">HP: 100 / 100</p>
+        <div class="health-info">
+            <div class="health-bar">
+                <div class="health-fill" id="playerHealthFill"></div>
+            </div>
+            <p id="playerHpText">HP: 100 / 100</p>
+        </div>
     </div>
-
-</div>
 
     <div class="versus-label">VS</div>
 
     <div class="monster-status enemy-status">
-
-    <div class="monster-details">
-        <h3 id="enemyMonsterName">Dagtwig</h3>
-        <p>Lv. <span id="enemyMonsterLevel">1</span></p>
-    </div>
-
-    <div class="health-info">
-        <div class="health-bar">
-            <div class="health-fill" id="enemyHealthFill"></div>
+        <div class="monster-details">
+            <h3 id="enemyMonsterName">Dagtwig</h3>
+            <p>Lv. <span id="enemyMonsterLevel">1</span></p>
         </div>
 
-        <p id="enemyHpText">HP: 90 / 90</p>
+        <div class="health-info">
+            <div class="health-bar">
+                <div class="health-fill" id="enemyHealthFill"></div>
+            </div>
+            <p id="enemyHpText">HP: 90 / 90</p>
+        </div>
     </div>
 
 </div>
 
+<!-- BATTLE MESSAGE -->
+<div class="battle-message-box">
+    <p id="battleMessage">Choose a skill to attack!</p>
 </div>
 
 <!-- BATTLE ARENA -->
 <div class="battle-arena">
 
     <div class="player-placeholder">
-    <img 
-        id="playerMonsterSprite"
-        src="ASSETS/monsters/tarsela/idle.png"
-        alt="Tarsela"
-    >
-</div>
+        <img
+            id="playerMonsterSprite"
+            src="ASSETS/monsters/tarsela/idle.png"
+            alt="Tarsela">
+    </div>
 
     <div class="monster-placeholder enemy-placeholder">
-    <img 
-        id="enemyMonsterSprite"
-        src="ASSETS/monsters/dagtwig/idle.png"
-        alt="Dagtwig"
-    >
-</div>
+        <img
+            id="enemyMonsterSprite"
+            src="ASSETS/monsters/dagtwig/idle.png"
+            alt="Dagtwig">
+    </div>
 
 </div>
 
 <!-- BEFORE BATTLE -->
 <div class="before-battle">
+
     <h3>Your Monster Team</h3>
     <p>You can have up to 3 monsters in your team.</p>
 
     <div class="team-slots">
-        <div class="team-slot">Monster 1</div>
-        <div class="team-slot">Monster 2</div>
-        <div class="team-slot">Monster 3</div>
+
+        <div class="team-slot">
+            <span>Empty Slot</span>
+        </div>
+
+        <div class="team-slot">
+            <img
+                src="ASSETS/monsters/tarsela/idle.png"
+                alt="Tarsela">
+            <strong>Tarsela</strong>
+            <small>Lv. 1</small>
+        </div>
+
+        <div class="team-slot">
+            <span>Empty Slot</span>
+        </div>
+
     </div>
 
     <button id="startBattleBtn">Start Battle</button>
+
 </div>
 
 <!-- BATTLE SKILLS -->
 <div class="battle-skills">
-    <button class="skill-button">Skill 1</button>
-    <button class="skill-button">Skill 2</button>
-    <button class="skill-button">Skill 3</button>
-    <button class="skill-button">Skill 4</button>
-</div>
 
+    <button class="skill-button" id="skill1Btn">
+        Star Spark
+    </button>
+
+    <button class="skill-button" id="skill2Btn">
+        Wing Slash
+    </button>
+
+    <button class="skill-button" id="skill3Btn">
+        Floral Guard
+    </button>
+
+    <button class="skill-button ultimate-skill" id="skill4Btn">
+        Parol Burst
+        <small id="ultimateCooldown"></small>
+    </button>
+
+</div>
 
 
         <!-- Settings Screen -->

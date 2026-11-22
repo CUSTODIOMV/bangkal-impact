@@ -387,9 +387,7 @@ body.character-selection-active .game-logo {
 
 
 
-/* ============================= */
 /* BATTLE SCREEN */
-/* ============================= */
 
 .game-screen {
     width: 100%;
@@ -561,6 +559,7 @@ body.battle-active .game-header {
     gap: 20px;
     padding: 20px;
     overflow: hidden;
+    display: none;
 
     background:
         linear-gradient(
@@ -591,43 +590,60 @@ body.battle-active .game-header {
     text-shadow: 2px 2px 4px #101C19;
 }
 
-/* BEFORE BATTLE TEAM */
+/* BEFORE BATTLE: MONSTER TEAM BOX */
 
 .before-battle {
     margin-top: 15px;
-    padding: 15px;
+    padding: 25px;
     background: rgba(38, 59, 50, 0.95);
     border: 1px solid #627D60;
-    border-radius: 10px;
+    border-radius: 12px;
+    text-align: center;
 }
 
 .before-battle h3 {
     color: #E8D7A8;
+    font-size: 22px;
+    margin-bottom: 5px;
 }
 
 .before-battle p {
     color: #B5C4B7;
-    margin: 6px 0 12px;
+    margin-bottom: 20px;
     font-size: 13px;
 }
 
 .team-slots {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-bottom: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 650px;
+    margin: 0 auto 20px;
 }
 
 .team-slot {
-    width: 110px;
-    height: 65px;
+    min-height: 180px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    background: rgba(16, 28, 25, 0.65);
     border: 1px dashed #829789;
-    border-radius: 8px;
+    border-radius: 10px;
+    padding: 12px;
     color: #B5C4B7;
-    font-size: 12px;
+}
+
+.team-slot img {
+    width: 130px;
+    height: 115px;
+    object-fit: contain;
+    image-rendering: pixelated;
+}
+
+.team-slot strong {
+    color: #E8D7A8;
+    margin-top: 5px;
 }
 
 #startBattleBtn {
@@ -663,10 +679,85 @@ body.battle-active .game-header {
     margin-top: 15px;
 }
 
+body.battle-active::before {
+    display: none;
+}
+
 .skill-button {
     width: 100%;
     margin: 0;
     padding: 14px 8px;
+}
+
+.game-screen.battle-started .battle-arena {
+    display: flex;
+}
+
+/* MONSTER DASH ANIMATIONS */
+
+.player-placeholder.dash-forward {
+    animation: playerDashForward 0.4s ease-in-out;
+}
+
+.enemy-placeholder.dash-forward {
+    animation: enemyDashForward 0.4s ease-in-out;
+}
+
+
+/* MONSTER ATTACK ANIMATION */
+
+.attack-animation {
+    animation: attackEffect 0.5s ease-in-out;
+}
+
+.skill-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+@keyframes playerDashForward {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(100px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+
+@keyframes enemyDashForward {
+    0% {
+        transform: translateX(0);
+    }
+
+    50% {
+        transform: translateX(-100px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+
+@keyframes attackEffect {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* RESPONSIVE BATTLE SCREEN */
@@ -749,29 +840,213 @@ body.battle-active .game-header {
 
 
 /* PLAYER MONSTER SPRITE */
-
 .player-placeholder img {
-    width: 180px;
-    height: 180px;
-
+    width: 250px;
+    height: 250px;
     object-fit: contain;
     image-rendering: pixelated;
+    transform: translateY(80px);
 }
 
 .enemy-placeholder img {
-    width: 180px;
-    height: 180px;
+    width: 250px;
+height: 250px;
     object-fit: contain;
     image-rendering: pixelated;
-
-    transform: scaleX(-1);
-
     position: relative;
     left: 50px;
+    transform: scaleX(-1) translateY(80px);
 }
 
 
+/* UPDATED DIVISORIA BATTLE SCREEN*/
 
+/* FULL BATTLEFIELD BACKGROUND */
+.game-screen.battle-started {
+    width: 100%;
+    max-width: none;
+    min-height: calc(100svh - 20px);
+    margin: 0;
+    padding: 12px 4%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+
+    background:
+    linear-gradient(
+        rgba(16, 28, 25, 0.55),
+        rgba(16, 28, 25, 0.65)
+    ),
+    url("../ASSETS/backgrounds/divisoria-bg.jpg");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    border-radius: 0;
+}
+
+/* STAGE HEADER */
+.game-screen.battle-started .stage-header {
+    margin: 5px 0;
+}
+
+.game-screen.battle-started .stage-header h2 {
+    color: #F1F0DF;
+    text-shadow: 2px 2px 5px #101C19;
+}
+
+.game-screen.battle-started .stage-header p {
+    color: #FFFFFF;
+    text-shadow: 1px 1px 4px #101C19;
+}
+
+/* BATTLE MESSAGE */
+.game-screen.battle-started .battle-message-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 5px auto 0;
+    flex-shrink: 0;
+}
+
+#battleMessage {
+    width: min(500px, 90%);
+    padding: 10px 18px;
+
+    background: rgba(16, 28, 25, 0.85);
+    border: 1px solid #D7B979;
+    border-radius: 10px;
+
+    color: #F1F0DF;
+    font-size: 15px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 1px 1px 3px #000;
+}
+
+/* HIDE BATTLE MESSAGE BEFORE BATTLE STARTS */
+.game-screen:not(.battle-started) .battle-message-box {
+    display: none;
+}
+
+/* MONSTER STATUS */
+.game-screen.battle-started .battle-status {
+    margin-top: 20px;
+    margin-bottom: 0;
+    gap: 25px;
+}
+
+/* REMOVE THE BATTLE ARENA CONTAINER */
+.game-screen.battle-started .battle-arena {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 350px;
+    max-height: none;
+
+    padding: 10px 5%;
+    margin: 0;
+
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+
+    justify-content: space-between;
+    align-items: center;
+
+    position: relative;
+    overflow: visible;
+}
+
+/* MONSTER POSITIONS */
+.game-screen.battle-started .player-placeholder,
+.game-screen.battle-started .enemy-placeholder {
+    width: 45%;
+    height: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
+  
+}
+
+/* SKILL BUTTONS AT THE BOTTOM */
+.game-screen.battle-started .battle-skills {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0;
+
+    position: relative;
+    z-index: 2;
+    margin-top: 35px;
+
+    flex-shrink: 0;
+    z-index: 2;
+}
+
+.game-screen.battle-started .skill-button {
+    width: 100%;
+    min-width: 0;
+    padding: 14px 8px;
+}
+
+/* MOBILE BATTLE LAYOUT */
+@media (max-width: 600px) {
+
+    .game-screen.battle-started {
+        min-height: calc(100svh - 10px);
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .game-screen.battle-started .battle-status {
+        gap: 8px;
+    }
+
+    .game-screen.battle-started .battle-arena {
+    min-height: 250px;
+    max-height: none;
+        padding: 5px;
+        position: relative;
+        z-index: 1;
+        overflow: visible;
+    }
+
+    .game-screen.battle-started .player-placeholder img,
+    .game-screen.battle-started .enemy-placeholder img {
+        width: 130px;
+        height: 130px;
+    }
+
+    #battleMessage {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .game-screen.battle-started .battle-skills {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .game-screen.battle-started .skill-button {
+        padding: 11px 5px;
+        font-size: 13px;
+    }
+}
 
 /* Screen Sizes */
 @media (max-width: 600px) {
